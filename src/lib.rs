@@ -15,6 +15,7 @@ pub struct BigInteger {
     sign: Sign,
 }
 
+#[allow(dead_code)]
 impl BigInteger {
     fn new(digits: Vec<u8>, sign: Sign) -> BigInteger {
         BigInteger {
@@ -126,8 +127,8 @@ impl Add for BigInteger {
     fn add(self, other: BigInteger) -> BigInteger {
         let signs = (&self.sign, &other.sign);
         match signs {
-            (Sign::Positive, Sign::Negative) => return self - other,
-            (Sign::Negative, Sign::Positive) => return other - self,
+            (Sign::Positive, Sign::Negative) => self - other,
+            (Sign::Negative, Sign::Positive) => other - self,
             (Sign::Positive, Sign::Positive) | (Sign::Negative, Sign::Negative) => {
                 let max_length = self.digits.len().max(other.digits.len());
                 let mut vec1 = self.digits.clone();
@@ -153,10 +154,10 @@ impl Add for BigInteger {
                 if carry == 1 {
                     result.push(1)
                 };
-                return BigInteger {
+                BigInteger {
                     digits: result,
                     sign: Sign::Positive,
-                };
+                }
             }
         }
     }
@@ -200,10 +201,10 @@ impl Sub for BigInteger {
         if carry == 1 {
             result.push(1)
         };
-        return BigInteger {
+        BigInteger {
             digits: result,
             sign: resulting_sign,
-        };
+        }
     }
 }
 
@@ -218,7 +219,7 @@ impl Mul for BigInteger {
         vec2.resize(max_length, 0 as u8);
         println!("{:?} * {:?}", vec1, vec2);
         let mut carry = 0;
-        let mut summands: Vec<BigInteger> = vec2
+        let summands: Vec<BigInteger> = vec2
             .into_iter()
             .enumerate()
             .map(|(index, elem2)| {
@@ -256,31 +257,9 @@ impl Mul for BigInteger {
             .unwrap();
         println!("res::::::{:?}", dev);
         dev
-
-        // if carry != 0 {
-        //     result.push(carry)
-        // }
-        // println!("{:?}", result);
-        // BigInteger {
-        //     digits: vec![1, 2, 3],
-        //     sign: match (self.sign, other.sign) {
-        //         (Positive, Positive) | (Negative, Negative) => Positive,
-        //         (_, _) => Negative,
-        //     },
-        // }
     }
 }
 
-// .map(|(x, y)| -> u8 {
-//     let res = x * y + carry;
-//     if res >= 10 {
-//         carry = res / 10;
-//         res % 10
-//     } else {
-//         carry = 0;
-//         res
-//     }
-// })
 #[cfg(test)]
 mod tests {
     use super::*;
